@@ -23,19 +23,38 @@ protocol SQLiteTable {
 
 extension SQLiteTable {
     static func expression<Value>(_ keyPath: KeyPath<Self, Value>) throws -> Expression<Value> {
-        guard let field = allFields.first(where: { $0.partialKeyPath == keyPath }) else {
-            throw NSError(domain: "", code: -1)
+        if keyPath == primary.keyPath {
+            return .init(primary.identifier)
+        } else if let field = fields.first(where: { $0.partialKeyPath == keyPath }) {
+            return .init(field.identifier)
+        } else {
+            throw SQLiteTableError.fieldNotFound
         }
-        return .init(field.identifier)
-    }
-    
-    static var allFields: [AnySQLiteField<Self>] {
-        [primary] + fields
     }
     
     static var tableName: String {
         String(describing: Self.self)
     }
+}
+
+struct SQLiteExpression<T: SQLiteTable> {
+    let keyPath: PartialKeyPath<T>
+    
+    init<V>(keyPath: WritableKeyPath<T, V>) where V: SQLiteFieldValue {
+        self.keyPath = keyPath
+    }
+    
+    func expression<V>() throws -> Expression<V> {
+        if let keyPath = keyPath as? KeyPath<T, V> {
+            return try T.expression(keyPath)
+        } else {
+            throw SQLiteTableError.fieldNotFound
+        }
+    }
+}
+
+enum SQLiteTableError: Error {
+    case fieldNotFound
 }
 
 // MARK: - Set Values

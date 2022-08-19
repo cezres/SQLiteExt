@@ -12,6 +12,7 @@ protocol SQLiteFieldValue: SQLite.Value {
 }
 
 extension SQLiteFieldValue {
+    
     func setValue<Root>(to root: inout Root, keyPath: PartialKeyPath<Root>) {
         if let keyPath = keyPath as? WritableKeyPath<Root, Self> {
             root[keyPath: keyPath] = self

@@ -24,7 +24,7 @@ class AnySQLiteField<Root>: SQLiteFieldProtocol {
     let identifier: String
     let partialKeyPath: PartialKeyPath<Root>
     
-    private let create: (_ builder: TableBuilder) -> Void
+    private let create: (_ builder: TableBuilder, _ primaryKey: Bool) -> Void
     private let insert: (_ root: Root) -> Setter
     private let setValue: (_ row: Row, _ to: inout Root) -> Void
     
@@ -32,8 +32,8 @@ class AnySQLiteField<Root>: SQLiteFieldProtocol {
         self.partialKeyPath = keyPath
         self.identifier = identifier
         
-        create = { builder in
-            builder.column(T.expression(identifier), primaryKey: false)
+        create = { builder, primaryKey in
+            builder.column(T.expression(identifier), primaryKey: primaryKey)
         }
         setValue = { row, to in
             to[keyPath: keyPath] = row[T.expression(identifier)]
@@ -44,8 +44,8 @@ class AnySQLiteField<Root>: SQLiteFieldProtocol {
         }
     }
     
-    func addColumn(to builder: TableBuilder) {
-        create(builder)
+    func addColumn(to builder: TableBuilder, primaryKey: Bool) {
+        create(builder, primaryKey)
     }
     
     func setter(from value: Root) -> Setter {

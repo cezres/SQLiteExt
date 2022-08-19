@@ -19,7 +19,7 @@ extension KeyPath {
     
     func asExpression() throws -> Expression<Value> where Root: SQLiteTable {
         guard let identifier = Root.fields.first(where: { $0.partialKeyPath == self })?.identifier else {
-            throw NSError(domain: "", code: -1)
+            throw SQLiteTableError.fieldNotFound
         }
         return asExpression(identifier)
     }
