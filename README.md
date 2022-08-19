@@ -20,6 +20,7 @@ try db.insert(user2)
 
 // Query
 XCTAssertEqual(user1, try db.find(primary: user1.id))
+XCTAssertEqual(user1, try db.find(keyPath: \.name, value: user1.name))
 XCTAssertEqual([user1, user2], try db.query(User.expression(\.age) >= 12))
 XCTAssertEqual([user2], try db.query(User.expression(\.age) >= 18))
 
