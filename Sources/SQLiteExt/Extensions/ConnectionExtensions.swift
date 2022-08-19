@@ -57,10 +57,6 @@ extension Connection {
         }
     }
     
-    func values<T>(_ type: T.Type) throws -> [T] where T: SQLiteTable {
-        try query(nil)
-    }
-    
     func count(_ type: any SQLiteTable.Type) throws -> Int {
         try self.scalar(Table(type.tableName).count)
     }
@@ -109,8 +105,8 @@ extension Connection {
         try query(T.expression(keyPath) == value)
     }
     
-    func query<T>() throws -> [T] where T: SQLiteTable {
-        return []
+    func query<T>(_ type: T.Type) throws -> [T] where T: SQLiteTable {
+        try query(nil)
     }
     
     func query<T>(type: T.Type, predicate: Expression<Bool>?) throws -> [T] where T: SQLiteTable {

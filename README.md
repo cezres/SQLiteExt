@@ -36,7 +36,7 @@ let update = query.update(try User.expression(\.age) += 1)
 try db.run(update)
 XCTAssertEqual(try db.find(type: User.self, primary: user2.id)?.age, user2.age + 1)
 
-print(try db.values(User.self))
+print(try db.query(User.self))
 ```
 
 ```swift
