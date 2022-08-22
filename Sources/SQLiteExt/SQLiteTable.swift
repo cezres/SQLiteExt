@@ -8,13 +8,9 @@
 import Foundation
 import SQLite
 
-protocol SQLiteTable {
-    
-    associatedtype PrimaryValue: SQLiteFieldValue where PrimaryValue.Datatype: Equatable
+public protocol SQLiteTable {
     
     static var tableName: String { get }
-    
-    static var primary: SQLiteFild<Self, PrimaryValue> { get }
     
     static var fields: [AnySQLiteField<Self>] { get }
         
@@ -23,8 +19,16 @@ protocol SQLiteTable {
 
 extension SQLiteTable {
     static func expression<Value>(_ keyPath: KeyPath<Self, Value>) throws -> Expression<Value> {
-        if keyPath == primary.keyPath {
-            return .init(primary.identifier)
+        if let field = fields.first(where: { $0.partialKeyPath == keyPath }) {
+            return .init(field.identifier)
+        } else {
+            throw SQLiteTableError.fieldNotFound
+        }
+    }
+    
+    static func expression<Value>(_ keyPath: KeyPath<Self, Value>) throws -> Expression<Value> where Self: SQLiteTablePrimaryKey {
+        if keyPath == self.primary.keyPath {
+            return .init(self.primary.identifier)
         } else if let field = fields.first(where: { $0.partialKeyPath == keyPath }) {
             return .init(field.identifier)
         } else {
@@ -62,6 +66,12 @@ enum SQLiteTableError: Error {
 extension SQLiteTable {
     
     mutating func setValues(_ row: Row) {
+        Self.fields.forEach { field in
+            setValues(row, for: field)
+        }
+    }
+    
+    mutating func setValues(_ row: Row) where Self: SQLiteTablePrimaryKey {
         setValues(row, for: Self.primary)
         Self.fields.forEach { field in
             setValues(row, for: field)

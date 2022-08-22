@@ -8,10 +8,10 @@
 import Foundation
 import SQLite
 
-protocol SQLiteFieldValue: SQLite.Value {
+public protocol SQLiteFieldValue: SQLite.Value {
 }
 
-extension SQLiteFieldValue {
+public extension SQLiteFieldValue {
     
     func setValue<Root>(to root: inout Root, keyPath: PartialKeyPath<Root>) {
         if let keyPath = keyPath as? WritableKeyPath<Root, Self> {
@@ -39,3 +39,4 @@ extension Int64: SQLiteFieldValue {}
 extension Double: SQLiteFieldValue {}
 extension Blob: SQLiteFieldValue {}
 extension Bool: SQLiteFieldValue {}
+extension UUID: SQLiteFieldValue {}

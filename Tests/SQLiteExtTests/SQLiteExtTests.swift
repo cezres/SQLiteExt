@@ -11,8 +11,8 @@ final class SQLiteExtTests: XCTestCase {
         XCTAssertEqual(SQLiteExt().text, "Hello, World!")
                 
         let db = try Connection(.inMemory)
-        let user1 = User(id: "1", name: "aaa", age: 12)
-        var user2 = User(id: "2", name: "bbb", age: 24)
+        let user1 = User(name: "aaa", age: 12)
+        var user2 = User(name: "bbb", age: 24)
         
         // Insert
         try db.insert(user1)
@@ -48,7 +48,7 @@ final class SQLiteExtTests: XCTestCase {
     
     func testInsert() throws {
         let db = try Connection(.inMemory)
-        var user1 = User(id: "1", name: "aaa", age: 12)
+        var user1 = User(name: "aaa", age: 12)
         
         try db.insert(user1)
         XCTAssertEqual(try db.count(User.self), 1)
@@ -60,7 +60,7 @@ final class SQLiteExtTests: XCTestCase {
     }
 }
 
-struct User: SQLiteTable, Equatable {
+struct User: SQLiteTable, SQLiteTablePrimaryKey, Equatable {
     
     static var primary: SQLiteFild<User, String> = .init(identifier: "id", keyPath: \.id)
         
@@ -73,8 +73,8 @@ struct User: SQLiteTable, Equatable {
     var name: String
     var age: Int
     
-    init(id: String, name: String, age: Int) {
-        self.id = id
+    init(name: String, age: Int) {
+        self.id = UUID().uuidString
         self.name = name
         self.age = age
     }

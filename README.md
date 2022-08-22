@@ -4,8 +4,8 @@
 
 ```swift
 let db = try Connection(.inMemory)
-let user1 = User(id: "1", name: "aaa", age: 12)
-var user2 = User(id: "2", name: "bbb", age: 24)
+let user1 = User(name: "aaa", age: 12)
+var user2 = User(name: "bbb", age: 24)
 
 // Insert
 try db.insert(user1)
@@ -40,10 +40,10 @@ print(try db.query(User.self))
 ```
 
 ```swift
-struct User: SQLiteTable, Equatable {
-
-    static var primary: SQLiteFild<User, String> = .init(identifier: "id", keyPath: \.id)
+struct User: SQLiteTable, SQLiteTablePrimaryKey, Equatable {
     
+    static var primary: SQLiteFild<User, String> = .init(identifier: "id", keyPath: \.id)
+        
     static var fields: [AnySQLiteField<User>] = [
         .init(identifier: "name", keyPath: \.name),
         .init(identifier: "age", keyPath: \.age),
@@ -53,8 +53,8 @@ struct User: SQLiteTable, Equatable {
     var name: String
     var age: Int
     
-    init(id: String, name: String, age: Int) {
-        self.id = id
+    init(name: String, age: Int) {
+        self.id = UUID().uuidString
         self.name = name
         self.age = age
     }

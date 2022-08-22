@@ -8,10 +8,10 @@
 import Foundation
 import SQLite
 
-extension Connection {
+public extension Connection {
     
     @discardableResult
-    func __run<T, R>(type: T.Type, _ block: () throws -> R) throws -> R where T: SQLiteTable {
+    private func __run<T, R>(type: T.Type, _ block: () throws -> R) throws -> R where T: SQLiteTable {
         do {
             return try block()
         } catch SQLite.Result.error(let message, let code, let statement) {
@@ -35,6 +35,16 @@ extension Connection {
     func create<T>(_ table: T.Type) throws where T: SQLiteTable {
         try run(
             Table(T.tableName).create(ifNotExists: true) { builder in
+                T.fields.forEach {
+                    $0.addColumn(to: builder, primaryKey: false)
+                }
+            }
+        )
+    }
+    
+    func create<T>(_ table: T.Type) throws where T: SQLiteTable, T: SQLiteTablePrimaryKey {
+        try run(
+            Table(T.tableName).create(ifNotExists: true) { builder in
                 T.primary.addColumn(to: builder, primaryKey: true)
                 T.fields.forEach {
                     $0.addColumn(to: builder, primaryKey: false)
@@ -43,18 +53,25 @@ extension Connection {
         )
     }
     
-    func insert<T>(_ value: T) throws where T: SQLiteTable {
+    func _insert<T>(_ value: T, fields: [AnySQLiteField<T>]) throws where T: SQLiteTable {
         try __run(type: T.self) {
             try self.run(
-                
                 Table(T.tableName).insert(
                     or: .replace,
-                    [T.primary.setter(from: value)] + T.fields.map {
+                    fields.map {
                         $0.setter(from: value)
                     }
                 )
             )
         }
+    }
+    
+    func insert<T>(_ value: T) throws where T: SQLiteTable {
+        try _insert(value, fields: T.fields)
+    }
+    
+    func insert<T>(_ value: T) throws where T: SQLiteTable, T: SQLiteTablePrimaryKey {
+        try _insert(value, fields: [T.primary] + T.fields)
     }
     
     func count(_ type: any SQLiteTable.Type) throws -> Int {
@@ -69,7 +86,7 @@ extension Connection {
         try run(Table(type.tableName).delete())
     }
     
-    func delete<T>(_ value: T) throws where T: SQLiteTable {
+    func delete<T>(_ value: T) throws where T: SQLiteTable, T: SQLiteTablePrimaryKey {
         try delete(T.self, predicate: T.primary.expression() == value[keyPath: T.primary.keyPath])
     }
     
@@ -83,13 +100,13 @@ extension Connection {
 }
 
 // MARK: - Query
-extension Connection {
+public extension Connection {
     
-    func find<T>(primary: T.PrimaryValue) throws -> T? where T: SQLiteTable {
+    func find<T>(primary: T.PrimaryValue) throws -> T? where T: SQLiteTable, T: SQLiteTablePrimaryKey {
         try query(T.primary.expression() == primary).first
     }
     
-    func find<T>(type: T.Type, primary: T.PrimaryValue) throws -> T? where T: SQLiteTable {
+    func find<T>(type: T.Type, primary: T.PrimaryValue) throws -> T? where T: SQLiteTable, T: SQLiteTablePrimaryKey {
         try query(T.primary.expression() == primary).first
     }
     

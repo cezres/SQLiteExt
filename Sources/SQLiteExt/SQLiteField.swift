@@ -8,7 +8,7 @@
 import Foundation
 import SQLite
 
-protocol SQLiteFieldProtocol {
+public protocol SQLiteFieldProtocol {
     
     associatedtype Root
     
@@ -19,16 +19,16 @@ protocol SQLiteFieldProtocol {
     init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T: SQLiteFieldValue
 }
 
-class AnySQLiteField<Root>: SQLiteFieldProtocol {
+public class AnySQLiteField<Root>: SQLiteFieldProtocol {
     
-    let identifier: String
-    let partialKeyPath: PartialKeyPath<Root>
+    public let identifier: String
+    public let partialKeyPath: PartialKeyPath<Root>
     
     private let create: (_ builder: TableBuilder, _ primaryKey: Bool) -> Void
     private let insert: (_ root: Root) -> Setter
     private let setValue: (_ row: Row, _ to: inout Root) -> Void
     
-    required init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T: SQLiteFieldValue {
+    public required init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T: SQLiteFieldValue {
         self.partialKeyPath = keyPath
         self.identifier = identifier
         
@@ -57,11 +57,11 @@ class AnySQLiteField<Root>: SQLiteFieldProtocol {
     }
 }
 
-class SQLiteFild<Root, Value: SQLiteFieldValue>: AnySQLiteField<Root> {
+public class SQLiteFild<Root, Value: SQLiteFieldValue>: AnySQLiteField<Root> {
     
     let keyPath: KeyPath<Root, Value>
     
-    init(identifier: String, keyPath: WritableKeyPath<Root, Value>) {
+    public init(identifier: String, keyPath: WritableKeyPath<Root, Value>) {
         self.keyPath = keyPath
         super.init(identifier: identifier, keyPath: keyPath)
     }
@@ -70,22 +70,7 @@ class SQLiteFild<Root, Value: SQLiteFieldValue>: AnySQLiteField<Root> {
         fatalError("init(identifier:keyPath:) has not been implemented")
     }
     
-    func expression() -> Expression<Value> {
+    public func expression() -> Expression<Value> {
         .init(identifier)
     }
 }
-
-
-//extension Never: Binding {
-//}
-//extension Never: SQLiteFieldValue {
-//    public static func fromDatatypeValue(_ datatypeValue: Int) -> Int { 0 }
-//
-//    public var datatypeValue: Int { 0 }
-//
-//    public static var declaredDatatype: String { "" }
-//}
-//extension __SQLiteTab where PrimaryType == Never {
-//}
-//struct EmptySQLiteField {
-//}

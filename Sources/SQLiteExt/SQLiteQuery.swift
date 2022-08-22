@@ -8,7 +8,7 @@
 import Foundation
 import SQLite
 
-struct SQLiteQuery<T: SQLiteTable> {
+public struct SQLiteQuery<T: SQLiteTable> {
     
     let expression: Expression<Bool>
     
@@ -45,7 +45,7 @@ struct SQLiteQuery<T: SQLiteTable> {
     }
 }
 
-extension Connection {
+public extension Connection {
     
     func query<T>(query: SQLiteQuery<T>) throws -> [T] where T: SQLiteTable {
         try self.query(T.self, query: query)
