@@ -8,8 +8,6 @@
 import Foundation
 import SQLite
 
-typealias __SQLitePrimaryKeyTable = SQLiteTable & SQLiteTablePrimaryKey
-
 public extension Connection {
     
     @discardableResult private func __run<T, R>(type: T.Type, _ block: () throws -> R) throws -> R where T: SQLiteTable {
