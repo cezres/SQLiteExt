@@ -17,7 +17,7 @@ public protocol SQLiteTable {
     init()
 }
 
-extension SQLiteTable {
+public extension SQLiteTable {
     static func expression<Value>(_ keyPath: KeyPath<Self, Value>) throws -> Expression<Value> {
         if let field = fields.first(where: { $0.partialKeyPath == keyPath }) {
             return .init(field.identifier)

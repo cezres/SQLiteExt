@@ -50,8 +50,14 @@ public extension Connection {
     func query<T>(query: SQLiteQuery<T>) throws -> [T] where T: SQLiteTable {
         try self.query(T.self, query: query)
     }
+    func query<T>(query: SQLiteQuery<T>) throws -> [T] where T: SQLiteTable, T: SQLiteTablePrimaryKey {
+        try self.query(T.self, query: query)
+    }
     
     func query<T>(_ type: T.Type, query: SQLiteQuery<T>) throws -> [T] where T: SQLiteTable {
+        try self.query(type: type, predicate: query.expression)
+    }
+    func query<T>(_ type: T.Type, query: SQLiteQuery<T>) throws -> [T] where T: SQLiteTable, T: SQLiteTablePrimaryKey {
         try self.query(type: type, predicate: query.expression)
     }
 }
