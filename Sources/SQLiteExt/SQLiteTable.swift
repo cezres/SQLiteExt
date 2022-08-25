@@ -44,7 +44,7 @@ public extension SQLiteTable {
 struct SQLiteExpression<T: SQLiteTable> {
     let keyPath: PartialKeyPath<T>
     
-    init<V>(keyPath: WritableKeyPath<T, V>) where V: SQLiteFieldValue {
+    init<V>(keyPath: WritableKeyPath<T, V>) where V: Value {
         self.keyPath = keyPath
     }
     
@@ -103,7 +103,7 @@ extension SQLiteTable {
             }
             valueIndex += 1
             
-            if let value = value as? any SQLiteFieldValue {
+            if let value = value as? any Value {
                 value.setValue(to: &self, keyPath: field.partialKeyPath)
             }
         }

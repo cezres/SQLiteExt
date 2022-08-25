@@ -13,7 +13,7 @@ extension Row {
         self[Expression<T>(identifier)]
     }
     
-    func decode<T, V: SQLite.Value>(value: inout T, identifier: String, keyPath: WritableKeyPath<T, V>) {
+    func decode<T, V: Value>(value: inout T, identifier: String, keyPath: WritableKeyPath<T, V>) {
         value[keyPath: keyPath] = decode(identifier)
     }
 }

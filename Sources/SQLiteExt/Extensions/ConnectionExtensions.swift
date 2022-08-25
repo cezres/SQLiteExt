@@ -112,7 +112,7 @@ extension Connection {
         try delete(T.self, predicate: T.primary.expression() == value[keyPath: T.primary.keyPath])
     }
     
-    func delete<T, V>(_ type: T.Type, keyPath: KeyPath<T, V>, value: V) throws where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Equatable {
+    func delete<T, V>(_ type: T.Type, keyPath: KeyPath<T, V>, value: V) throws where T: SQLiteTable, V: Value, V.Datatype: Equatable {
         try delete(type, predicate: T.expression(keyPath) == value)
     }
     
@@ -132,17 +132,17 @@ public extension Connection {
         try query(type: T.self, predicate: T.primary.expression() == primary).first
     }
     
-    func query<T, V>(keyPath: KeyPath<T, V>, value: V) throws -> [T] where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Equatable {
+    func query<T, V>(keyPath: KeyPath<T, V>, value: V) throws -> [T] where T: SQLiteTable, V: Value, V.Datatype: Equatable {
         try query(type: T.self, predicate: T.expression(keyPath) == value)
     }
-    func query<T, V>(keyPath: KeyPath<T, V>, value: V) throws -> [T] where T: SQLiteTable, T: SQLiteTablePrimaryKey, V: SQLiteFieldValue, V.Datatype: Equatable {
+    func query<T, V>(keyPath: KeyPath<T, V>, value: V) throws -> [T] where T: SQLiteTable, T: SQLiteTablePrimaryKey, V: Value, V.Datatype: Equatable {
         try query(type: T.self, predicate: T.expression(keyPath) == value)
     }
     
-    func query<T, V>(type: T.Type, keyPath: KeyPath<T, V>, value: V) throws -> [T] where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Equatable {
+    func query<T, V>(type: T.Type, keyPath: KeyPath<T, V>, value: V) throws -> [T] where T: SQLiteTable, V: Value, V.Datatype: Equatable {
         try query(type: type, predicate: T.expression(keyPath) == value)
     }
-    func query<T, V>(type: T.Type, keyPath: KeyPath<T, V>, value: V) throws -> [T] where T: SQLiteTable, T: SQLiteTablePrimaryKey, V: SQLiteFieldValue, V.Datatype: Equatable {
+    func query<T, V>(type: T.Type, keyPath: KeyPath<T, V>, value: V) throws -> [T] where T: SQLiteTable, T: SQLiteTablePrimaryKey, V: Value, V.Datatype: Equatable {
         try query(type: type, predicate: T.expression(keyPath) == value)
     }
     

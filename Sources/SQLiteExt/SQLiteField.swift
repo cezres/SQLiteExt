@@ -16,7 +16,7 @@ public protocol SQLiteFieldProtocol {
     
     var partialKeyPath: PartialKeyPath<Root> { get }
         
-    init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T: SQLiteFieldValue
+    init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T: Value
 }
 
 public class AnySQLiteField<Root>: SQLiteFieldProtocol {
@@ -28,7 +28,7 @@ public class AnySQLiteField<Root>: SQLiteFieldProtocol {
     private let insert: (_ root: Root) -> Setter
     private let setValue: (_ row: Row, _ to: inout Root) -> Void
     
-    public required init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T: SQLiteFieldValue {
+    public required init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T: Value {
         self.partialKeyPath = keyPath
         self.identifier = identifier
         
@@ -57,20 +57,20 @@ public class AnySQLiteField<Root>: SQLiteFieldProtocol {
     }
 }
 
-public class SQLiteFild<Root, Value: SQLiteFieldValue>: AnySQLiteField<Root> {
+public class SQLiteFild<R, V: Value>: AnySQLiteField<R> {
     
-    let keyPath: KeyPath<Root, Value>
+    let keyPath: KeyPath<R, V>
     
-    public init(identifier: String, keyPath: WritableKeyPath<Root, Value>) {
+    public init(identifier: String, keyPath: WritableKeyPath<Root, V>) {
         self.keyPath = keyPath
         super.init(identifier: identifier, keyPath: keyPath)
     }
     
-    required init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T : SQLiteFieldValue {
+    required init<T>(identifier: String, keyPath: WritableKeyPath<Root, T>) where T: Value {
         fatalError("init(identifier:keyPath:) has not been implemented")
     }
     
-    public func expression() -> Expression<Value> {
+    public func expression() -> Expression<V> {
         .init(identifier)
     }
 }

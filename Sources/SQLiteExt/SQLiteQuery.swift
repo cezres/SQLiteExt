@@ -16,27 +16,27 @@ public struct SQLiteQuery<T: SQLiteTable> {
         self.expression = expression
     }
     
-    static func equals<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Equatable {
+    static func equals<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: Value, V.Datatype: Equatable {
         .init(expression: try T.expression(keyPath) == value)
     }
     
-    static func notEquals<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Equatable {
+    static func notEquals<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: Value, V.Datatype: Equatable {
         .init(expression: try T.expression(keyPath) != value)
     }
     
-    static func lessThan<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Comparable {
+    static func lessThan<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: Value, V.Datatype: Comparable {
         .init(expression: try T.expression(keyPath) < value)
     }
     
-    static func lessThanOrEquals<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Comparable {
+    static func lessThanOrEquals<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: Value, V.Datatype: Comparable {
         .init(expression: try T.expression(keyPath) <= value)
     }
     
-    static func greaterThan<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Comparable {
+    static func greaterThan<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: Value, V.Datatype: Comparable {
         .init(expression: try T.expression(keyPath) > value)
     }
     
-    static func greaterThanOrEquals<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: SQLiteFieldValue, V.Datatype: Comparable {
+    static func greaterThanOrEquals<T, V>(_ keyPath: KeyPath<T, V>, _ value: V) throws -> SQLiteQuery<T> where T: SQLiteTable, V: Value, V.Datatype: Comparable {
         .init(expression: try T.expression(keyPath) >= value)
     }
     

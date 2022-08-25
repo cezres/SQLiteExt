@@ -10,7 +10,7 @@ import SQLite
 
 public protocol SQLiteTablePrimaryKey {
 
-    associatedtype PrimaryValue: SQLiteFieldValue where PrimaryValue.Datatype: Equatable
+    associatedtype PrimaryValue: Value where PrimaryValue.Datatype: Equatable
 
     static var primary: SQLiteFild<Self, PrimaryValue> { get }
 }
