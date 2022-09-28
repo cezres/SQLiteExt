@@ -102,9 +102,9 @@ public extension Connection {
 }
 
 // MARK: - Delete
-extension Connection {
+public extension Connection {
     
-    func delete(_ type: any SQLiteTable.Type) throws{
+    func delete(_ type: any SQLiteTable.Type) throws {
         try run(Table(type.tableName).delete())
     }
     
